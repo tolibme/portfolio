@@ -12,7 +12,7 @@ export default function Hero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        Yo, I’m <span className="text-primary">John Doe</span>
+        Yo, I’m <span className="text-primary">Tolibjon Olimjonov</span>
       </motion.h1>
       <motion.p
         className="text-lg text-muted-foreground max-w-lg"
