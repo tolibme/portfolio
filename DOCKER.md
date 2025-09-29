@@ -78,3 +78,13 @@ Production configuration includes:
 - Memory limit: 512MB
 - Memory reservation: 256MB
 - Health checks every 30 seconds
+
+## CI/CD Integration
+
+The project includes GitHub Actions workflow (`.github/workflows/deploy.yml`) that:
+- Builds Docker images on every push
+- Pushes to GitHub Container Registry (GHCR)
+- Deploys to production server using docker-compose
+- Runs health checks after deployment
+
+See `DEPLOYMENT.md` for detailed CI/CD setup instructions.

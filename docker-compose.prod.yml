@@ -2,10 +2,7 @@ version: '3.8'
 
 services:
   portfolio-prod:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: runner
+    image: ${PORTFOLIO_IMAGE:-ghcr.io/tolibme/portfolio:latest}
     ports:
       - "80:3000"
     environment:
