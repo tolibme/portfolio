@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ThemeToggle } from "./theme-toggle"
 import { motion, useMotionValueEvent, useScroll } from "framer-motion"
 import { useState } from "react"
+import { Menu, X } from "lucide-react"
 
 const navItems = [
   { label: "Home", href: "#hero" },
@@ -15,6 +16,7 @@ const navItems = [
 export default function Navbar() {
   const { scrollY } = useScroll()
   const [hidden, setHidden] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const prev = scrollY.getPrevious()
@@ -40,7 +42,8 @@ export default function Navbar() {
           MyPortfolio
         </Link>
 
-        <div className="flex items-center gap-6">
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-6">
           {navItems.map((item) => (
             <a
               key={item.href}
@@ -52,7 +55,43 @@ export default function Navbar() {
           ))}
           <ThemeToggle />
         </div>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden flex items-center gap-4">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-md hover:bg-accent transition-colors"
+            aria-label="Toggle mobile menu"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Navigation Menu */}
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{
+          opacity: mobileMenuOpen ? 1 : 0,
+          height: mobileMenuOpen ? "auto" : 0,
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="md:hidden overflow-hidden bg-background/95 backdrop-blur-lg border-t"
+      >
+        <div className="px-6 py-4 space-y-4">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </motion.div>
     </motion.nav>
   )
 }
