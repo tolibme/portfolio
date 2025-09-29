@@ -22,11 +22,8 @@ npm run dev
 
 ### Docker (Recommended)
 ```bash
-# Development with hot reload
-docker-compose --profile dev up portfolio-dev
-
-# Production build
-docker-compose up portfolio
+# Build and run with Docker
+docker-compose up
 ```
 
 ## 🛠️ Tech Stack
@@ -53,14 +50,13 @@ docker-compose up portfolio
 
 ## 🐳 Docker Deployment
 
-The project includes complete Docker configuration:
+Simple Docker setup:
+- Single Dockerfile for easy builds
+- Docker Compose for local development  
+- Production deployment with CI/CD
+- GitHub Container Registry integration
 
-- **Multi-stage builds** for optimized production images
-- **Development containers** with hot reload
-- **Production deployment** with health checks
-- **CI/CD pipeline** with GitHub Actions
-
-See [`DOCKER.md`](DOCKER.md) for detailed Docker usage.
+See [`DOCKER.md`](DOCKER.md) for usage details.
 
 ## 🚀 Deployment
 

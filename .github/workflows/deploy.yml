@@ -103,7 +103,7 @@ jobs:
             docker-compose -f docker-compose.prod.yml down
             
             # Start with new image
-            docker-compose -f docker-compose.prod.yml up -d portfolio-prod
+            docker-compose -f docker-compose.prod.yml up -d portfolio
             
             # Clean up old images
             docker image prune -f
@@ -119,7 +119,7 @@ jobs:
             sleep 30
             
             # Check if container is running
-            if docker ps | grep -q "portfolio-prod"; then
+            if docker ps | grep -q "portfolio"; then
               echo "✅ Container is running"
               
               # Test HTTP endpoint
