@@ -6,8 +6,8 @@ export default function Projects() {
   const projects = [
     { 
       title: "ScanDrip", 
-      desc: "Fashion + QR authentication platform for verified clothing with custom user pages.", 
-      link: "https://scandrip-api.tolib.me" 
+      desc: "Fashion + QR authentication platform for verified clothing with custom user pages (Backend).", 
+      link: "https://scandrip-api.tolib.me/swagger-ui/index.html" 
     },
     { 
       title: "AI SaaS", 
