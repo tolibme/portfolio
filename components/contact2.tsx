@@ -17,7 +17,7 @@ interface Contact2Props {
 
 const Contact2 = ({
   title = "Get In Touch",
-  description = "Let's discuss your next project or collaboration opportunity",
+  description = "Open for projects, collabs, or just good conversations.",
 
   email = "tolibjon0804@gmail.com",
   web = { label: "tolib.me", url: "https://tolib.me" },
