@@ -20,6 +20,12 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
             cd ~/portfolio
             git pull origin main
+            
+            # Clean up any existing containers and volumes
+            docker-compose down --remove-orphans --volumes || true
+            docker system prune -f || true
+            
+            # Start fresh
             docker-compose up -d --build
           EOF
 
