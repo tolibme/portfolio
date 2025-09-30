@@ -6,28 +6,38 @@ export default function Projects() {
   const projects = [
     { 
       title: "ScanDrip", 
-      desc: "Fashion + QR authentication platform for verified clothing with custom user pages (Backend).", 
-      link: "https://scandrip-api.tolib.me/swagger-ui/index.html" 
+      desc: "Fashion + QR authentication platform for verified clothing with custom user pages.", 
+      backendLink: "https://scandrip-api.tolib.me/swagger-ui/index.html",
+      frontendLink: "https://scandrip.tolib.me",
+      link: undefined as string | undefined
     },
     { 
       title: "AI SaaS", 
       desc: "AI-powered SaaS demo app showcasing automation and scalability.", 
-      link: "https://github.com/tolibme" 
+      link: "https://github.com/tolibme",
+      backendLink: undefined as string | undefined,
+      frontendLink: undefined as string | undefined
     },
     { 
       title: "HeatBox (Azure CI/CD)", 
       desc: "Deployment experiments with Azure VM, Docker, GitHub Actions, and SSL domain config.", 
-      link: "https://github.com/tolibme/scandrip" 
+      link: "https://github.com/tolibme/scandrip",
+      backendLink: undefined as string | undefined,
+      frontendLink: undefined as string | undefined
     },
     { 
       title: "Medusa Storefront", 
       desc: "E-commerce storefront (shop.scandrips.com) using Medusa + Printify for print-on-demand fashion.", 
-      link: "https://tolib.me" 
+      link: "https://tolib.me",
+      backendLink: undefined as string | undefined,
+      frontendLink: undefined as string | undefined
     },
     { 
       title: "Canva Integration", 
       desc: "Custom tee design feature inside ScanDrip using Canva Connect API.", 
-      link: "https://github.com/tolibme" 
+      link: "https://github.com/tolibme",
+      backendLink: undefined as string | undefined,
+      frontendLink: undefined as string | undefined
     },
   ]
 
@@ -42,11 +52,26 @@ export default function Projects() {
             </CardHeader>
             <CardContent>
               <p className="mb-4">{p.desc}</p>
-              <Link href={p.link} target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="w-full">
-                  View Project
-                </Button>
-              </Link>
+              {p.title === "ScanDrip" && p.backendLink && p.frontendLink ? (
+                <div className="flex gap-2">
+                  <Link href={p.backendLink} target="_blank" rel="noopener noreferrer" className="flex-1">
+                    <Button variant="outline" className="w-full">
+                      Backend API
+                    </Button>
+                  </Link>
+                  <Link href={p.frontendLink} target="_blank" rel="noopener noreferrer" className="flex-1">
+                    <Button variant="outline" className="w-full">
+                      Frontend
+                    </Button>
+                  </Link>
+                </div>
+              ) : p.link ? (
+                <Link href={p.link} target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" className="w-full">
+                    View Project
+                  </Button>
+                </Link>
+              ) : null}
             </CardContent>
           </Card>
         ))}

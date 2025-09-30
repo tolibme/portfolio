@@ -20,7 +20,7 @@ export default function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
-        Full Stack Dev cookin modern web apps with Next.js, Tailwind, and shadcn.
+        Full Stack Dev & Builder, creating sleek digital products from backend to frontend with modern tech stacks.
       </motion.p>
       <motion.div
         className="mt-6 flex gap-4"
@@ -28,8 +28,12 @@ export default function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6 }}
       >
-        <Button>My Work</Button>
-        <Button variant="outline">Contact Me</Button>
+        <a href="#projects">
+          <Button>My Work</Button>
+        </a>
+        <a href="/contact">
+          <Button variant="outline">Contact Me</Button>
+        </a>
       </motion.div>
     </section>
   )
