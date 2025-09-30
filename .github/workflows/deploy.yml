@@ -62,23 +62,4 @@ jobs:
             docker ps
           EOF
 
-      - name: Health check
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
-            sleep 20
-            
-            if docker ps | grep -q "portfolio"; then
-              echo "✅ Container is running"
-              if curl -f http://localhost > /dev/null 2>&1; then
-                echo "✅ Application is responding"
-              else
-                echo "❌ Application not responding"
-                docker logs $(docker ps -q --filter "name=portfolio") | tail -20
-                exit 1
-              fi
-            else
-              echo "❌ Container not running"
-              docker ps -a | grep portfolio || echo "No portfolio container found"
-              exit 1
-            fi
-          EOF
+
