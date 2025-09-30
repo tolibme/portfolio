@@ -7,9 +7,7 @@
     "build": "next build",
     "start": "next start -p 3001",
     "lint": "eslint",
-    "docker:dev": "docker-compose up --build portfolio-dev",
-    "docker:prod": "docker-compose up --build portfolio-prod",
-    "docker:fast": "docker build -f Dockerfile.dev -t portfolio:dev . && docker run -p 3001:3001 portfolio:dev"
+    "docker": "docker-compose up --build"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

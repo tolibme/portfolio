@@ -1,78 +1,35 @@
-name: Deploy Portfolio
+name: Build and Deploy Portfolio
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
-    outputs:
-      image: ${{ steps.image.outputs.image }}
-      digest: ${{ steps.build.outputs.digest }}
-
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Container Registry
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=sha,prefix=sha-
-            type=raw,value=latest,enable={{is_default_branch}}
-
       - name: Build and push Docker image
-        id: build
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Output image
-        id: image
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository }}:latest
         run: |
-          echo "image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}" >> $GITHUB_OUTPUT
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
@@ -81,56 +38,47 @@ jobs:
 
       - name: Deploy to server
         env:
-          IMAGE: ${{ needs.build.outputs.image }}
+          IMAGE_NAME: ghcr.io/${{ github.repository }}:latest
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << EOF
             # Navigate to project directory
-            cd ~/portfolio
+            cd ~/portfolio || { echo "Portfolio directory not found"; exit 1; }
             
             # Pull latest changes
             git pull origin main
             
-            # Login to GitHub Container Registry
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            
-            # Pull the new image
-            docker pull ${{ env.IMAGE }}
-            
-            # Update docker-compose with new image
-            export PORTFOLIO_IMAGE=${{ env.IMAGE }}
-            
             # Stop existing containers
-            docker-compose -f docker-compose.prod.yml down
+            docker-compose down || true
+            
+            # Login and pull new image
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker pull ${IMAGE_NAME}
             
             # Start with new image
-            docker-compose -f docker-compose.prod.yml up -d portfolio
+            PORTFOLIO_IMAGE=${IMAGE_NAME} docker-compose -f docker-compose.prod.yml up -d
             
-            # Clean up old images
+            # Clean up and show status
             docker image prune -f
-            
-            # Show running containers
             docker ps
           EOF
 
       - name: Health check
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
-            # Wait for container to be ready
-            sleep 30
+            sleep 20
             
-            # Check if container is running
             if docker ps | grep -q "portfolio"; then
               echo "✅ Container is running"
-              
-              # Test HTTP endpoint
-              if curl -f http://localhost:3000 > /dev/null 2>&1; then
+              if curl -f http://localhost > /dev/null 2>&1; then
                 echo "✅ Application is responding"
               else
-                echo "❌ Application is not responding"
+                echo "❌ Application not responding"
+                docker logs $(docker ps -q --filter "name=portfolio") | tail -20
                 exit 1
               fi
             else
-              echo "❌ Container is not running"
+              echo "❌ Container not running"
+              docker ps -a | grep portfolio || echo "No portfolio container found"
               exit 1
             fi
           EOF

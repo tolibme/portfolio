@@ -1,53 +1,29 @@
-# Docker Configuration for Portfolio
+# 🐳 Simple Docker Setup
 
-Simple Docker setup for the portfolio project.
+## Quick Start
 
-## Files
-
-- `Dockerfile` - Simple build configuration
-- `docker-compose.yml` - Local development
-- `docker-compose.prod.yml` - Production deployment
-- `.dockerignore` - Build optimization
-
-## Usage
-
-### Local Development
-
+**Build and run:**
 ```bash
-# Build and run locally
-docker-compose up
-
-# Run in background
-docker-compose up -d
+npm run docker
 ```
 
-### Production
-
+**Or manually:**
 ```bash
-# Deploy production version
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose up --build
 ```
 
-### Individual Commands
-
+**For production:**
 ```bash
-# Build image
+docker-compose -f docker-compose.prod.yml up
+```
+
+## That's it! 🚀
+
+- App runs on **http://localhost:3001**
+- Simple single-stage build
+- Fast and minimal configuration
+
+## Build only (without running):
+```bash
 docker build -t portfolio .
-
-# Run container
-docker run -p 3000:3000 portfolio
 ```
-
-## Environment Variables
-
-- `NODE_ENV` - Set to 'production' or 'development'
-- `PORT` - Application port (default: 3000)
-
-## CI/CD Integration
-
-GitHub Actions automatically:
-- Builds Docker images on push
-- Deploys to production server
-- Uses GitHub Container Registry (GHCR)
-
-See `DEPLOYMENT.md` for setup details.
